@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Spotify Now Playing</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #121212;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    img { border-radius: 50%; width: 200px; height: 200px; }
+    h1, h2 { margin: 10px 0; }
+    button {
+      padding: 10px 20px;
+      font-size: 18px;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1 id="title">Not Playing</h1>
+  <h2 id="artist"></h2>
+  <img id="album" src="" alt="">
+  <button id="login-btn">Login with Spotify</button>
+
+  <script src="main.js"></script>
+</body>
+</html>
