@@ -1,4 +1,4 @@
-const CLIENT_ID = "c6571b41056c4cccae0f0e645b036f61";
+const CLIENT_ID = "PASTE_YOUR_SPOTIFY_CLIENT_ID_HERE";
 const REDIRECT_URI = "https://ace21574-byte.github.io/spotify-now-playing-web/";
 const SCOPES = ["user-read-playback-state","user-read-currently-playing"];
 
