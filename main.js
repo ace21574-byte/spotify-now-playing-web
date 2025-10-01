@@ -1,4 +1,4 @@
-const CLIENT_ID = "c6571b41056c4cccae0f0e645b036f61";
+const CLIENT_ID = "7745c1a77d97485b9bc4279e59d97b34";
 const REDIRECT_URI = "https://ace21574-byte.github.io/spotify-now-playing-web/";
 const SCOPES = ["user-read-playback-state","user-read-currently-playing"];
 
@@ -55,4 +55,5 @@ window.onload = () => {
     document.getElementById("login-btn").style.display = "none";
   }
 };
+
 
