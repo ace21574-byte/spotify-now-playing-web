@@ -1,6 +1,8 @@
+// ---------------- CONFIG ----------------
 const CLIENT_ID = "7745c1a77d97485b9bc4279e59d97b34";
 const REDIRECT_URI = "https://ace21574-byte.github.io/spotify-now-playing-web/";
 const SCOPES = ["user-read-playback-state","user-read-currently-playing"];
+// ---------------------------------------
 
 function getAccessTokenFromHash() {
   const hash = window.location.hash.substring(1);
@@ -55,5 +57,3 @@ window.onload = () => {
     document.getElementById("login-btn").style.display = "none";
   }
 };
-
-
