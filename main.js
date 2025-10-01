@@ -1,6 +1,6 @@
 // --- CONFIG ---
 const CLIENT_ID = "YOUR_CLIENT_ID"; // Spotify app client ID
-const REDIRECT_URI = "https://YOUR_USERNAME.github.io/spotify-now-playing-web/";
+const REDIRECT_URI = "https://ace21574-byte.github.io/spotify-now-playing-web/";
 const SCOPES = ["user-read-playback-state","user-read-currently-playing"];
 
 // --- HELPER FUNCTIONS ---
@@ -88,3 +88,4 @@ window.onload = async () => {
     document.getElementById("login-btn").style.display = "none";
   }
 };
+
