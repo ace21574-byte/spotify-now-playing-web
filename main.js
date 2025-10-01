@@ -1,17 +1,13 @@
-// ----------------- CONFIG -----------------
-const CLIENT_ID = "c6571b41056c4cccae0f0e645b036f61"; // Your Spotify Client ID
-const REDIRECT_URI = "https://ace21574-byte.github.io/spotify-now-playing-web/"; 
+const CLIENT_ID = "c6571b41056c4cccae0f0e645b036f61";
+const REDIRECT_URI = "https://ace21574-byte.github.io/spotify-now-playing-web/";
 const SCOPES = ["user-read-playback-state","user-read-currently-playing"];
-// ------------------------------------------
 
-// Helper to get access token from URL hash
 function getAccessTokenFromHash() {
   const hash = window.location.hash.substring(1);
   const params = new URLSearchParams(hash);
   return params.get("access_token");
 }
 
-// Redirect to Spotify login (Implicit Grant)
 function login() {
   const authUrl = `https://accounts.spotify.com/authorize?` +
                   `client_id=${CLIENT_ID}` +
@@ -21,7 +17,6 @@ function login() {
   window.location = authUrl;
 }
 
-// Fetch currently playing track
 async function updateNowPlaying(token) {
   try {
     const resp = await fetch("https://api.spotify.com/v1/me/player/currently-playing", {
@@ -43,18 +38,15 @@ async function updateNowPlaying(token) {
   }
 }
 
-// Main logic
 document.getElementById("login-btn").addEventListener("click", login);
 
 window.onload = () => {
   let token = localStorage.getItem("access_token");
-
-  // Check if Spotify returned access token in URL hash
   const hashToken = getAccessTokenFromHash();
   if (hashToken) {
     token = hashToken;
     localStorage.setItem("access_token", token);
-    window.location.hash = ""; // remove token from URL
+    window.location.hash = "";
   }
 
   if (token) {
