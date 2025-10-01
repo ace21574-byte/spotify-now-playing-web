@@ -1,63 +1,27 @@
 // ----------------- CONFIG -----------------
-const CLIENT_ID = "c6571b41056c4cccae0f0e645b036f61"; // <--- put your Spotify Client ID
+const CLIENT_ID = "c6571b41056c4cccae0f0e645b036f61"; // Your Spotify Client ID
 const REDIRECT_URI = "https://ace21574-byte.github.io/spotify-now-playing-web/"; 
 const SCOPES = ["user-read-playback-state","user-read-currently-playing"];
 // ------------------------------------------
 
-// Helper functions
-function base64urlencode(str) {
-  return btoa(String.fromCharCode.apply(null, new Uint8Array(str)))
-    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+// Helper to get access token from URL hash
+function getAccessTokenFromHash() {
+  const hash = window.location.hash.substring(1);
+  const params = new URLSearchParams(hash);
+  return params.get("access_token");
 }
 
-async function sha256(buffer) {
-  return await crypto.subtle.digest("SHA-256", buffer);
+// Redirect to Spotify login (Implicit Grant)
+function login() {
+  const authUrl = `https://accounts.spotify.com/authorize?` +
+                  `client_id=${CLIENT_ID}` +
+                  `&response_type=token` +
+                  `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
+                  `&scope=${encodeURIComponent(SCOPES.join(" "))}`;
+  window.location = authUrl;
 }
 
-// PKCE Login
-async function login() {
-  const verifier = Array.from(crypto.getRandomValues(new Uint8Array(64)))
-    .map(b => ('0' + b.toString(16)).slice(-2)).join('');
-  localStorage.setItem("verifier", verifier);
-
-  const challenge = base64urlencode(await sha256(new TextEncoder().encode(verifier)));
-
-  const url = `https://accounts.spotify.com/authorize?` +
-    `response_type=code&client_id=${CLIENT_ID}` +
-    `&scope=${encodeURIComponent(SCOPES.join(' '))}` +
-    `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
-    `&code_challenge_method=S256&code_challenge=${challenge}`;
-
-  window.location = url;
-}
-
-// Parse query param
-function getQueryParam(name) {
-  const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.get(name);
-}
-
-// Exchange code for token
-async function getToken(code) {
-  const verifier = localStorage.getItem("verifier");
-  const body = new URLSearchParams({
-    grant_type: "authorization_code",
-    code,
-    redirect_uri: REDIRECT_URI,
-    client_id: CLIENT_ID,
-    code_verifier: verifier
-  });
-
-  const resp = await fetch("https://accounts.spotify.com/api/token", {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body
-  });
-
-  return await resp.json();
-}
-
-// Fetch current playing track
+// Fetch currently playing track
 async function updateNowPlaying(token) {
   try {
     const resp = await fetch("https://api.spotify.com/v1/me/player/currently-playing", {
@@ -82,19 +46,17 @@ async function updateNowPlaying(token) {
 // Main logic
 document.getElementById("login-btn").addEventListener("click", login);
 
-window.onload = async () => {
-  const code = getQueryParam("code");
-  if (code) {
-    const tokenData = await getToken(code);
-    if (tokenData.access_token) {
-      localStorage.setItem("access_token", tokenData.access_token);
-      history.replaceState({}, document.title, "/"); // remove code from URL
-    } else {
-      console.error("Failed to get access token:", tokenData);
-    }
+window.onload = () => {
+  let token = localStorage.getItem("access_token");
+
+  // Check if Spotify returned access token in URL hash
+  const hashToken = getAccessTokenFromHash();
+  if (hashToken) {
+    token = hashToken;
+    localStorage.setItem("access_token", token);
+    window.location.hash = ""; // remove token from URL
   }
 
-  const token = localStorage.getItem("access_token");
   if (token) {
     updateNowPlaying(token);
     setInterval(() => updateNowPlaying(token), 5000);
